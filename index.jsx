@@ -70,8 +70,11 @@ class InlineEdit extends React.Component {
         if (this.state.editing && !prevState.editing) {
             inputElem.focus();
             SelectInputText(inputElem);
-        } else if (this.state.editing && prevProps.text != this.props.text) {
-            this.finishEditing();
+        } else if (prevProps.text != this.props.text) {
+            this.setState({ text: this.props.text });
+            if (this.state.editing) {
+                this.finishEditing();
+            }
         }
     }
 
