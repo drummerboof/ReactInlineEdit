@@ -45,6 +45,7 @@ class InlineEdit extends React.Component {
     }
 
     commitEditing() {
+        const cancelEditing = this.cancelEditing.bind(this)
         this.setState({editing: false, text: this.state.text});
         let newProp = {};
         newProp[this.props.paramName] = this.state.text;
