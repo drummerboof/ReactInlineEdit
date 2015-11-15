@@ -26,6 +26,10 @@ function SelectInputText(element) {
     element.setSelectionRange(0, element.value.length);
 }
 
+function isPromise(thing) {
+    return thing && typeof thing.then === 'function';
+}
+
 var InlineEdit = (function (_React$Component) {
     _inherits(InlineEdit, _React$Component);
 
@@ -74,7 +78,12 @@ var InlineEdit = (function (_React$Component) {
             this.setState({ editing: false, text: this.state.text });
             var newProp = {};
             newProp[this.props.paramName] = this.state.text;
-            this.props.change(newProp);
+            var result = this.props.change(newProp);
+            if (isPromise(result)) {
+                result.then(function (response) {
+                    if (response.error) cancelEditing();
+                })['catch'](cancelEditing);
+            }
         }
     }, {
         key: 'isInputValid',

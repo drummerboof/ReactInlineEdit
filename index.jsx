@@ -5,6 +5,10 @@ function SelectInputText(element) {
     element.setSelectionRange(0, element.value.length);
 }
 
+function isPromise (thing) {
+    return thing && typeof thing.then === 'function'
+}
+
 class InlineEdit extends React.Component {
     constructor(props) {
         super(props);
@@ -44,7 +48,12 @@ class InlineEdit extends React.Component {
         this.setState({editing: false, text: this.state.text});
         let newProp = {};
         newProp[this.props.paramName] = this.state.text;
-        this.props.change(newProp);
+        const result = this.props.change(newProp);
+        if (isPromise(result)) {
+            result.then(function (response) {
+                if (response.error) cancelEditing()
+            }).catch(cancelEditing)
+        }
     }
 
     isInputValid(text) {
